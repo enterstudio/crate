@@ -1027,7 +1027,7 @@ the :ref:`SESSION_USER <session_user>` that is performing the query::
 .. note::
 
     If the :ref:`enterprise edition <enterprise_features>` is disabled or the
-    user management module is not available the ``username`` is represented as
+    user management module is not available, the ``username`` is represented as
     ``NULL``.
 
 Every request that queries data or manipulates data is considered a "job" if it
