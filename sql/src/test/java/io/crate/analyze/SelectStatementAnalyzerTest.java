@@ -708,6 +708,13 @@ public class SelectStatementAnalyzerTest extends CrateDummyClusterServiceUnitTes
     }
 
     @Test
+    public void testDistinctOnNullLiteral() {
+        SelectAnalyzedStatement distinctAnalysis = analyze("select distinct null from users");
+        assertThat(distinctAnalysis.relation().querySpec().outputs(), isSQL("NULL"));
+        assertThat(distinctAnalysis.relation().querySpec().groupBy().get(), isSQL("NULL"));
+    }
+
+    @Test
     public void testSelectGlobalDistinctAggregate() {
         SelectAnalyzedStatement distinctAnalysis = analyze("select distinct count(*) from users");
         assertThat(distinctAnalysis.relation().querySpec().groupBy().isPresent(), is(false));

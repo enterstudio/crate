@@ -24,6 +24,7 @@ package io.crate.analyze.validator;
 import io.crate.analyze.symbol.Function;
 import io.crate.analyze.symbol.MatchPredicate;
 import io.crate.analyze.symbol.Symbol;
+import io.crate.analyze.symbol.SymbolType;
 import io.crate.analyze.symbol.SymbolVisitor;
 import io.crate.analyze.symbol.format.SymbolPrinter;
 import io.crate.types.DataTypes;
@@ -40,7 +41,8 @@ public class GroupBySymbolValidator {
     }
 
     private static void validateDataType(Symbol symbol) {
-        if (!DataTypes.PRIMITIVE_TYPES.contains(symbol.valueType())) {
+        if (!(symbol.symbolType() == SymbolType.LITERAL && symbol.valueType() == DataTypes.UNDEFINED) &&
+            !DataTypes.PRIMITIVE_TYPES.contains(symbol.valueType())) {
             throw new IllegalArgumentException(
                 String.format(Locale.ENGLISH, "Cannot GROUP BY '%s': invalid data type '%s'",
                     SymbolPrinter.INSTANCE.printSimple(symbol),
