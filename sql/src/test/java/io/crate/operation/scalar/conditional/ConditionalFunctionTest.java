@@ -138,4 +138,16 @@ public class ConditionalFunctionTest extends AbstractScalarFunctionsTest {
             Literal.of(110L),    // x
             Literal.of(111));    // a
     }
+
+    @Test
+    public void testCaseWithNullArgument() throws Exception {
+        String expression = "CASE 68 WHEN 38 THEN NULL ELSE 1 END";
+        assertEvaluate(expression, 1L);
+    }
+
+    @Test
+    public void testCaseWithNullArgumentReturnsNull() throws Exception {
+        String expression = "CASE 38 WHEN 38 THEN NULL ELSE 1 END";
+        assertEvaluate(expression, null);
+    }
 }
