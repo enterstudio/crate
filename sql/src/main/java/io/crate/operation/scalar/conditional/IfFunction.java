@@ -119,7 +119,7 @@ public class IfFunction extends Scalar<Object, Object> {
         DataType returnType = valueType;
         if (dataTypes.size() == 3) {
             returnType = dataTypes.get(2);
-            if ((returnType.id() != valueType.id()) == (valueType != DataTypes.UNDEFINED)) {
+            if ((returnType.id() != valueType.id()) == (valueType != DataTypes.UNDEFINED) == (returnType != DataTypes.UNDEFINED)) {
                 throw new IllegalArgumentException(String.format(Locale.ENGLISH,
                     "%s type of default result argument %s does not match type of results argument %s",
                     NAME, returnType, valueType));

@@ -150,4 +150,16 @@ public class ConditionalFunctionTest extends AbstractScalarFunctionsTest {
         String expression = "CASE 38 WHEN 38 THEN NULL ELSE 1 END";
         assertEvaluate(expression, null);
     }
+
+    @Test
+    public void testCaseWithNullArgumentElseReturnsNull() throws Exception {
+        String expression = "CASE 45 WHEN 38 THEN 1 ELSE NULL END";
+        assertEvaluate(expression, null);
+    }
+
+    @Test
+    public void testCaseWithNullArgumentIfReturnsLong() throws Exception {
+        String expression = "CASE 38 WHEN 38 THEN 1 ELSE NULL END";
+        assertEvaluate(expression, 1L);
+    }
 }
