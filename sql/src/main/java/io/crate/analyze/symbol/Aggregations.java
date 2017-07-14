@@ -47,7 +47,7 @@ public final class Aggregations {
     }
 
     /**
-     * @return false if the symbol is not found in the group by, or the if one the symbol's non-literal arguments are not found in the group by.
+     * @return true if the symbol is found in the group by, if the symbol is a scalar function all column arguments must be found in the group by.
      */
     public static boolean matchGroupBySymbol(Symbol s, List<Symbol> groupBy) {
         return GROUP_BY_MATCHER.process(s, groupBy);
