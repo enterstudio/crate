@@ -22,9 +22,9 @@
 package io.crate.analyze.validator;
 
 import io.crate.analyze.symbol.Function;
+import io.crate.analyze.symbol.Literal;
 import io.crate.analyze.symbol.MatchPredicate;
 import io.crate.analyze.symbol.Symbol;
-import io.crate.analyze.symbol.SymbolType;
 import io.crate.analyze.symbol.SymbolVisitor;
 import io.crate.analyze.symbol.format.SymbolPrinter;
 import io.crate.types.DataTypes;
@@ -35,14 +35,14 @@ import java.util.Locale;
 public class GroupBySymbolValidator {
 
     private final static InnerValidator INNER_VALIDATOR = new InnerValidator();
+    private final static LiteralVisitor LITERAL_VISITOR = new LiteralVisitor();
 
     public static void validate(Symbol symbol) throws IllegalArgumentException, UnsupportedOperationException {
         INNER_VALIDATOR.process(symbol, null);
     }
 
     private static void validateDataType(Symbol symbol) {
-        if (!(symbol.symbolType() == SymbolType.LITERAL && symbol.valueType() == DataTypes.UNDEFINED) &&
-            !DataTypes.PRIMITIVE_TYPES.contains(symbol.valueType())) {
+        if (!DataTypes.PRIMITIVE_TYPES.contains(symbol.valueType())) {
             throw new IllegalArgumentException(
                 String.format(Locale.ENGLISH, "Cannot GROUP BY '%s': invalid data type '%s'",
                     SymbolPrinter.INSTANCE.printSimple(symbol),
@@ -56,6 +56,9 @@ public class GroupBySymbolValidator {
         public Void visitFunction(Function function, @Nullable Function parentScalar) {
             switch (function.info().type()) {
                 case SCALAR:
+                    if (LITERAL_VISITOR.process(function, null)) {
+                        return null;
+                    }
                     visitSymbol(function, parentScalar);
                     if (parentScalar == null) {
                         parentScalar = function;
@@ -81,12 +84,37 @@ public class GroupBySymbolValidator {
 
         @Override
         protected Void visitSymbol(Symbol symbol, @Nullable Function parentScalar) {
+            if (LITERAL_VISITOR.process(symbol, null)) {
+                return null;
+            }
             if (parentScalar == null) {
                 validateDataType(symbol);
             } else {
                 validateDataType(parentScalar);
             }
             return null;
+        }
+    }
+
+    private static class LiteralVisitor extends SymbolVisitor<Void, Boolean> {
+
+        @Override
+        public Boolean visitFunction(Function function, Void context) {
+            boolean result = true;
+            for (Symbol arg: function.arguments()) {
+                result &= process(arg, null);
+            }
+            return result;
+        }
+
+        @Override
+        public Boolean visitLiteral(Literal symbol, Void context) {
+            return true;
+        }
+
+        @Override
+        public Boolean visitSymbol(Symbol symbol, Void context) {
+            return false;
         }
     }
 }
