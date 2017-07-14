@@ -40,7 +40,6 @@ To compile the CrateDB sources, run::
 
     $ ./gradlew compileJava
 
-
 To run CrateDB as a Gradle task, you need to create configuration file for
 logging::
 
@@ -127,7 +126,6 @@ Forbidden APIs
 You can run the `Forbidden APIs`_ tool like so::
 
     $ ./gradlew forbiddenApisMain
-
 
 Troubleshooting
 ===============

@@ -24,10 +24,10 @@ suitable for production and there is no rolling upgrade support.
 
 There will likely be several release candidates being released, each time we:
 
- - Create a "prepare release" commit. This commit updates the version-info,
-   finalizes the release notes and is tagged.
- - Create a "version bump" commit immediately afterwards. This re-enables the
-   ``SNAPSHOT`` flag and increases the version number.
+- Create a "prepare release" commit. This commit updates the version-info,
+  finalizes the release notes and is tagged.
+- Create a "version bump" commit immediately afterwards. This re-enables the
+  ``SNAPSHOT`` flag and increases the version number.
 
 So for example::
 
@@ -46,9 +46,10 @@ At some point we'll lift the feature freeze. At this point a ``major.minor``
 release branch is created and we bump the ``minor`` version on master.
 
 
-When the number of bugs discovered in the release candidates decreases enough
-and it's considered stable, we move the release candidate into our stable
-repositories and declare it stable.
+When the number of bugs discovered in the release candidates decrease enough,
+it's eventually declared as stable and moved into the stable repositories,
+marking the first stable release of this ``minor`` version.
+
 This can happen either in master during the feature freeze, or after the switch
 to a release branch.
 
