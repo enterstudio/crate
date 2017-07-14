@@ -390,7 +390,7 @@ public class LuceneQueryBuilderTest extends CrateUnitTest {
 
         BooleanClause booleanClause = ((BooleanQuery) neqQuery).clauses().get(1);
         assertThat(booleanClause.getOccur(), is(BooleanClause.Occur.MUST_NOT));
-        assertThat(booleanClause.getQuery().toString(), is("+name:a +name:b +name:c"));
+        assertThat(booleanClause.getQuery().toString(), is("name:a name:b name:c"));
     }
 
     @Test

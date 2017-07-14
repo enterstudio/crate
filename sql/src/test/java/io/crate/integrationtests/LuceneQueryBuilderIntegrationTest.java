@@ -252,4 +252,25 @@ public class LuceneQueryBuilderIntegrationTest extends SQLTransportIntegrationTe
         assertThat(response.rowCount(), is(1L));
         assertThat(response.rows()[0][0], is("yalla"));
     }
+
+    @Test
+    public void testWhereNotEqualAnyWithLargeArray() throws Exception {
+        execute("create table t1 (id integer, int_arr array(integer)) clustered into 2 shards with (number_of_replicas = 0)");
+        ensureYellow();
+
+        int arraySize = 2048;
+        Integer[] array1 = new Integer[arraySize];
+        Integer[] array2 = new Integer[arraySize];
+        for (int i = 0; i < arraySize; i++) {
+             array1[i] = i;
+             array2[i] = 2;
+        }
+        execute("insert into t1 (id, int_arr) values (1, ?)", new Object[] {array1});
+        execute("insert into t1 (id, int_arr) values (2, ?)", new Object[] {array2});
+        execute("refresh table t1");
+
+        execute("select * from t1 where id != any(int_arr)");
+        assertThat(response.rowCount(), is(1L));
+        assertThat(response.rows()[0][0], is(1));
+    }
 }

@@ -87,6 +87,7 @@ import io.crate.types.DataTypes;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.geo.Polygon;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queries.TermsQuery;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BoostQuery;
@@ -132,6 +133,7 @@ import org.locationtech.spatial4j.shape.Shape;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -438,11 +440,12 @@ public class LuceneQueryBuilder {
                     return Queries.newMatchNoDocsQuery("column does not exist in this index");
                 }
 
-                BooleanQuery.Builder andBuilder = new BooleanQuery.Builder();
+                Iterable valuesIterable = toIterable(arrayLiteral.value());
+                List<BytesRef> values = new ArrayList<>(Iterables.size(valuesIterable));
                 for (Object value : toIterable(arrayLiteral.value())) {
-                    andBuilder.add(fieldType.termQuery(value, null), BooleanClause.Occur.MUST);
+                    values.add(BytesRefs.toBytesRef(value));
                 }
-                return Queries.not(andBuilder.build());
+                return Queries.not(new TermsQuery(columnName, values));
             }
         }
 
