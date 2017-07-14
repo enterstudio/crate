@@ -21,6 +21,10 @@ Changes
 Fixes
 =====
 
+ - Use "crate" superuser as user session if a system query is executed. The
+   stats tables ``sys.jobs`` and ``sys.jobs_log`` list this user to prevent of
+   showing NULL instead.
+
  - Fixed a race condition which could cause ``UPDATE`` or ``DELETE`` statements
    to get stuck.
 

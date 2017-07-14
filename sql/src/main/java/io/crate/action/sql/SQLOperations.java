@@ -143,7 +143,8 @@ public class SQLOperations {
                                                      String preparedStmtName,
                                                      String sqlStmt,
                                                      int defaultLimit) {
-        Session session = createSession(defaultSchema, null, Option.NONE, defaultLimit);
+        User crateUser = userManager.findUser("crate");
+        Session session = createSession(defaultSchema, crateUser, Option.NONE, defaultLimit);
         session.parse(preparedStmtName, sqlStmt, Collections.emptyList());
         return new SQLDirectExecutor(session, preparedStmtName, sqlStmt);
     }
@@ -408,6 +409,9 @@ public class SQLOperations {
     /**
      * Stateful class that uses a prepared statement
      * and can execute it multiple times.
+     *
+     * If the user-management module is available it uses the "crate" superuser as session user.
+     * Otherwise it uses `NULL` instead.
      */
     public static class SQLDirectExecutor {
 
